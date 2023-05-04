@@ -141,15 +141,6 @@ dem <- dem %>%
 
 ### merge m49 dataset with UNHCR region codes and clean variable names
 
-## check whether there are origin or asylum codes in demo data that are not in m49
-# unhcr_iso3 <- unique(c(dem$origin_iso3, dem$asylum_iso3))
-#
-# unhcr_iso3_missingM49 <- unhcr_iso3[!(unhcr_iso3 %in% m49$`ISO-alpha3 Code`)] # "XXA" "TIB", "NAA" (Stateless and Tibet, Unknown) are in unhcr demographic data, but not in m49
-# unhcr_iso3_missingCountries <- unhcr_iso3[!(unhcr_iso3 %in% countries$iso3)] # "XXA" "TIB", NAA (Stateless, Tibet, Unknown) are in unhcr demographic data, but not in UNHCR country file
-#
-# countries_iso3_missingM49 <- countries$iso3[!(countries$iso3 %in% m49$`ISO-alpha3 Code`)] # "TWN", "XKX" (Taiwan, Kosovo) are in unhcr demographic data, but not in m49
-#
-
 # Stateless and Tibet: keep structure including those two codes in imputed dataset
 # covariates and regions: use those for China for Tibet/Taiwan, Serbia for Kosovo. For XXA and NAA, set region to own "unknown" level, use means of covariates (distance and GDP)
 
@@ -170,6 +161,15 @@ m49 <- m49 %>%
   add_row(region = "Unknown", subregion = "Unknown", country = "Unknown", iso3 = "NAA", m49 = 998) %>%
   add_row(filter(., iso3 == "SRB") %>% mutate(iso3 = "XKX", country = "Kosovo", m49 = 412))
 
+
+## add missing origins / asylum countries to countries dataset
+countries <- countries %>%
+  select(iso3, proGres_code, main_office_short, hcr_region, hcr_subregion) %>%
+  add_row(filter(., iso3 == "CHN") %>% mutate(iso3 = "TIB",  proGres_code = "TIB")) %>%
+  add_row(main_office_short = "Unknown", hcr_region = "Unknown", hcr_subregion = "Unknown", iso3 = "XXA", proGres_code = "STA") %>%
+  add_row(main_office_short = "Unknown", hcr_region = "Unknown", hcr_subregion = "Unknown", iso3 = "NAA", proGres_code = "UKN")
+
+
 ## create merge of m49 and countries files
 dim(m49)
 dim(countries)
@@ -181,12 +181,6 @@ dim(m49hcr) # OK
 sum(duplicated(m49hcr$iso3)) # OK, no duplicates
 
 
-## add missing origins / asylum countries to countries dataset
-countries <- countries %>%
-  select(iso3, proGres_code, main_office_short, hcr_region, hcr_subregion) %>%
-  add_row(filter(., iso3 == "CHN") %>% mutate(iso3 = "TIB",  proGres_code = "TIB")) %>%
-  add_row(main_office_short = "Unknown", hcr_region = "Unknown", hcr_subregion = "Unknown", iso3 = "XXA", proGres_code = "XXA") %>%
-  add_row(main_office_short = "Unknown", hcr_region = "Unknown", hcr_subregion = "Unknown", iso3 = "NAA", proGres_code = "NAA")
 
 
 
@@ -210,17 +204,30 @@ m49hcr_origin <- m49hcr %>%
 ## merge with demographics dataset
 
 dem <- dem %>%
-  left_join(m49hcr_asylum, by = "asylum_iso3") %>%
-  left_join(m49hcr_origin, by = "origin_iso3")
+  left_join(m49hcr_asylum, by = c("asylum" = "asylum_proGres_code")) %>%
+  left_join(m49hcr_origin,by = c("origin" = "origin_proGres_code"))
 dim(dem) # OK
 
 # check whether NAs in asylum/origin variables
 
 table(dem$asylum_country, useNA = "ifany")
 table(dem$asylum_region, useNA = "ifany")
-table(dem$origin_country, useNA = "ifany")
-table(dem$origin_region, useNA = "ifany")
-# all OK
+table(dem$asylum_iso3, useNA = "ifany") # no NAs
+table(dem$origin_country, useNA = "ifany") # 93 NAs
+table(dem$origin_region, useNA = "ifany") # 93 NAs
+table(dem$origin_iso3, useNA = "ifany") # 93 NAs
+
+View(dem %>% filter(is.na(origin_iso3))) # STA, UKN, TIB
+
+## check whether there are origin or asylum codes in demo data that are not in m49
+unhcr_iso3 <- unique(c(dem$origin_iso3, dem$asylum_iso3))
+
+unhcr_iso3_missingM49 <- unhcr_iso3[!(unhcr_iso3 %in% m49$iso3)] # OK, none
+unhcr_iso3_missingCountries <- unhcr_iso3[!(unhcr_iso3 %in% countries$iso3)] # Ok, none
+
+countries_iso3_missingM49 <- countries$iso3[!(countries$iso3 %in% m49$iso3)] # Ok, none
+
+
 
 
 ##### V. Merge distance and GNI covariates to dataset #####
