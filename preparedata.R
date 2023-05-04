@@ -217,7 +217,7 @@ table(dem$origin_country, useNA = "ifany") # 93 NAs
 table(dem$origin_region, useNA = "ifany") # 93 NAs
 table(dem$origin_iso3, useNA = "ifany") # 93 NAs
 
-View(dem %>% filter(is.na(origin_iso3))) # STA, UKN, TIB
+# View(dem %>% filter(is.na(origin_iso3))) # STA, UKN, TIB
 
 ## check whether there are origin or asylum codes in demo data that are not in m49
 unhcr_iso3 <- unique(c(dem$origin_iso3, dem$asylum_iso3))
@@ -423,14 +423,14 @@ t.sexTotalCheck <- dem_longMissing %>%
 
 
 ## check headline totals against 2021 Global Trends and refugee data finder
-t.total <- dem_longMissing %>% # ref finder: 25,733,717
+t.total <- dem_longMissing %>% # ref finder:
   summarise(total = sum(total)) # OK
 
-t.totalPoptype <- dem_longMissing %>% # GT 21.3M ref, 4.4M VDA, ref finder: 21,327,285 ref, 4,406,432 VDA
+t.totalPoptype <- dem_longMissing %>% #
   group_by(popType) %>%
   summarise(total = sum(total)) # OK
 
-t.totalRegion <- dem_longMissing %>% # checked against table 1 in GT 2021
+t.totalRegion <- dem_longMissing %>% #
   group_by(popType, asylum_hcr_region) %>%
   summarise(total = sum(total)) # OK (rounding errors in GT table)
 
@@ -449,7 +449,7 @@ t.popType.misProp <- dem_longMissing %>% # GT 2021: "For example, demographic da
 
 ##### VIII. Save dataset in data folder #####
 
-save(dem_longMissing, m49hcr, file = "data/dem_refvda_end2021.RData")
+save(dem_longMissing, m49hcr, file = "data/dem_refoip_end2022.RData")
 
 
 ############################################ END ###########################################################
