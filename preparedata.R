@@ -355,6 +355,14 @@ dem_longMissing <- dem %>%
     missing == "none" ~ male_AgeKnown
     )
   ) %>%
+  group_by(year, asylum, origin, popType,
+           asylum_region,          asylum_subregion,
+           asylum_country,         asylum_m49,             pairs_iso3,             asylum_iso3,            asylum_main_office_short, asylum_hcr_region,
+           asylum_hcr_subregion,   origin_region,          origin_subregion,       origin_country,         origin_m49,             origin_iso3,
+           origin_main_office_short, origin_hcr_region,      origin_hcr_subregion,   neighbor,               distance,               gni_origin,
+           gni_diff,               gni_asylum,             missing)  %>% # group new created rows with same origin/asylum/poptype/datatype rows
+  summarise(across(c(female_0_4:female_60, female, male_0_4:male_60, male, total), sum)) %>%
+  ungroup() %>%
   select(year, origin_iso3, origin_country, asylum_iso3, asylum_country, popType, missing,
          female_0_4:female_60, female, male_0_4:male_60, male, total,
          origin_region, origin_subregion, origin_m49:origin_hcr_subregion,
