@@ -34,7 +34,7 @@ m.pred <- dem_longMissing %>%
   add_predicted_draws(m.ageonly,
                       allow_new_levels = T,
                       sample_new_levels = "uncertainty",
-                      ndraws = 400,
+                      ndraws = 4000,
                       seed = 1355)
 toc()
 

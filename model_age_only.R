@@ -14,6 +14,7 @@ library(stringi)
 library(brms)
 library(tidybayes)
 library(bayesplot)
+library(writexl)
 
 ### read dataset
 load("data/dem_refoip_end2022.RData")

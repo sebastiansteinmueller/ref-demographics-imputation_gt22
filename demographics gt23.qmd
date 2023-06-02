@@ -156,8 +156,8 @@ imputations.world <- imputations |>
   group_by(year, imputation) |> 
   summarise(across(female_0_4:total, sum)) %>%
   mutate(children = rowSums(select(., female_0_4:female_12_17, male_0_4:male_12_17)),
-         girls = rowSums(select(., male_0_4:male_12_17)),
-         boys = rowSums(select(., female_0_4:female_12_17)),
+         girls = rowSums(select(., female_0_4:female_12_17)),
+         boys = rowSums(select(., male_0_4:male_12_17)),
          adults = rowSums(select(., female_18_59, female_60, male_18_59, male_60)),
          elderly = rowSums(select(., female_60, male_60)),
          childrenProp = children/total,
@@ -185,8 +185,8 @@ imputations.asy.region <- imputations |>
   summarise(across(female_0_4:total, sum)) %>%
   ungroup() %>%
   mutate(children = rowSums(select(., female_0_4:female_12_17, male_0_4:male_12_17)),
-         girls = rowSums(select(., male_0_4:male_12_17)),
-         boys = rowSums(select(., female_0_4:female_12_17)),
+         girls = rowSums(select(., female_0_4:female_12_17)),
+         boys = rowSums(select(., male_0_4:male_12_17)),
          adults = rowSums(select(., female_18_59, female_60, male_18_59, male_60)),
          elderly = rowSums(select(., female_60, male_60)),
          childrenProp = children/total,
@@ -214,8 +214,8 @@ imputations.asy.unhcrregion <- imputations |>
   summarise(across(female_0_4:total, sum)) %>%
   ungroup() %>%
   mutate(children = rowSums(select(., female_0_4:female_12_17, male_0_4:male_12_17)),
-         girls = rowSums(select(., male_0_4:male_12_17)),
-         boys = rowSums(select(., female_0_4:female_12_17)),
+         girls = rowSums(select(., female_0_4:female_12_17)),
+         boys = rowSums(select(., male_0_4:male_12_17)),
          adults = rowSums(select(., female_18_59, female_60, male_18_59, male_60)),
          elderly = rowSums(select(., female_60, male_60)),
          childrenProp = children/total,
@@ -243,8 +243,8 @@ imputations.asy <- imputations |>
   summarise(across(female_0_4:total, sum)) %>%
   ungroup() %>%
   mutate(children = rowSums(select(., female_0_4:female_12_17, male_0_4:male_12_17)),
-         girls = rowSums(select(., male_0_4:male_12_17)),
-         boys = rowSums(select(., female_0_4:female_12_17)),
+         girls = rowSums(select(., female_0_4:female_12_17)),
+         boys = rowSums(select(., male_0_4:male_12_17)),
          adults = rowSums(select(., female_18_59, female_60, male_18_59, male_60)),
          elderly = rowSums(select(., female_60, male_60)),
          childrenProp = children/total,
@@ -273,8 +273,8 @@ imputations.ori <- imputations |>
   summarise(across(female_0_4:total, sum)) %>%
   ungroup() %>%
   mutate(children = rowSums(select(., female_0_4:female_12_17, male_0_4:male_12_17)),
-         girls = rowSums(select(., male_0_4:male_12_17)),
-         boys = rowSums(select(., female_0_4:female_12_17)),
+         girls = rowSums(select(., female_0_4:female_12_17)),
+         boys = rowSums(select(., male_0_4:male_12_17)),
          adults = rowSums(select(., female_18_59, female_60, male_18_59, male_60)),
          elderly = rowSums(select(., female_60, male_60)),
          childrenProp = children/total,
@@ -302,8 +302,8 @@ t.imp.ori <- imputations.ori |>
 imputations.countries <- imputations |>
   ungroup() %>%
   mutate(children = rowSums(select(., female_0_4:female_12_17, male_0_4:male_12_17)),
-         girls = rowSums(select(., male_0_4:male_12_17)),
-         boys = rowSums(select(., female_0_4:female_12_17)),
+         girls = rowSums(select(., female_0_4:female_12_17)),
+         boys = rowSums(select(., male_0_4:male_12_17)),
          adults = rowSums(select(., female_18_59, female_60, male_18_59, male_60)),
          elderly = rowSums(select(., female_60, male_60)),
          childrenProp = children/total,
