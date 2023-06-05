@@ -34,6 +34,7 @@ library(ggdist)
 library(tidybayes)
 library(brms)
 library(equatiomatic)
+library(writexl)
 
 ### read datasets
 load("data/dem_refoip_end2022.RData")
