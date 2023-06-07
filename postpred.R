@@ -34,7 +34,7 @@ m.pred <- dem_longMissing %>%
   add_predicted_draws(m.ageonly,
                       allow_new_levels = T,
                       sample_new_levels = "uncertainty",
-                      ndraws = 4000,
+                      ndraws = 400,
                       seed = 1355)
 toc()
 
@@ -52,13 +52,7 @@ m.pred.wide <- m.pred %>%
                           year:missing,
                           total, asylum_sdgregion:logDistance)
   ) %>%
-  rename(imputation = .draw) %>%
-  mutate(
-    female = rowSums(select(., female_0_4:female_60)),
-    male = rowSums(select(., male_0_4:male_60)),
-    children = rowSums(select(., female_0_4:female_12_17, male_0_4:male_12_17)),
-    adults = rowSums(select(., female_18_59, female_60, male_18_59, male_60))
-  )
+  rename(imputation = .draw)
 
 ### merge type i) data with full age/sex observations to posterior draws ###
 dim(m.pred.wide)
@@ -69,8 +63,19 @@ imputations_longMissing <- m.pred.wide %>%
   group_by(imputation) %>%
   group_modify(
     ~bind_rows(.x, dem_longMissing %>% # add full type 1 dataset to each draw
-                 filter(missing %in% c("none"))
+                 filter(missing %in% c("none")) %>%
+               select(colnames(m.pred.wide)[-which(colnames(m.pred.wide)=="imputation")])
     )
+  )  %>%
+  ungroup() %>%
+  mutate(
+    female = rowSums(select(., female_0_4:female_60)),
+    male = rowSums(select(., male_0_4:male_60)),
+    children = rowSums(select(., female_0_4:female_12_17, male_0_4:male_12_17)),
+    adults = rowSums(select(., female_18_59, female_60, male_18_59, male_60)),
+    girls = rowSums(select(., female_0_4:female_12_17)),
+    boys = rowSums(select(., male_0_4:male_12_17)),
+    elderly = rowSums(select(., female_60, male_60))
   )
 
 dim(imputations_longMissing) # OK
@@ -119,8 +124,8 @@ imputations <- imputations_longMissing %>%
   ungroup() %>%
   group_by(imputation, year, asylum_sdgregion, origin_iso3, origin_country,
            asylum_iso3, asylum_country, popType) %>%
-  summarise(across(c(female_0_4:female_60, female,
-                     male_0_4:male_60, male, total),
+  summarise(across(c(female_0_4:female_60, female, girls,
+                     male_0_4:male_60, male, boys, children, adults, elderly, total),
                    sum
   )
   )
